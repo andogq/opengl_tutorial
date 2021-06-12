@@ -5,6 +5,34 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <signal.h>
+
+#define DEBUG
+
+#define assert(x) if (!(x)) raise(SIGTRAP);
+
+#ifdef DEBUG
+#define gl_call(x) gl_clear_errors(); x; assert(gl_check_errors(#x, __FILE__, __LINE__))
+#else
+#define gl_call(x) x
+#endif
+
+static void gl_clear_errors() {
+    while (glGetError() != GL_NO_ERROR);
+}
+
+static bool gl_check_errors(const char* function, const char* file, int line) {
+    bool ok = true;
+
+    while (unsigned int error = glGetError()) {
+        std::cout << "[OpenGL Error] (0x" << std::hex << error << std::dec << "): " << file << ": " <<
+            function << " (line "<<  line << ")" << std::endl;
+
+        ok = false;
+    }
+
+    return ok;
+}
 
 struct ShaderProgramSource {
     std::string vertex_source;
@@ -108,6 +136,9 @@ int main(void) {
     // Create the rendering context
     glfwMakeContextCurrent(window);
 
+    // Lock framerate
+    glfwSwapInterval(1);
+
     // Initialise glew
     if (glewInit() != GLEW_OK) {
         std::cout << "Problem initialising glew" << std::endl;
@@ -153,11 +184,25 @@ int main(void) {
     unsigned int shader_id = create_shader(source.vertex_source, source.fragment_source);
     glUseProgram(shader_id);
 
+    // Send color information into the shader
+    int uniform_location = glGetUniformLocation(shader_id, "u_color");
+    assert(uniform_location != -1);
+
+    float r = 0.0f;
+    float increment = 0.005f;
+    
     // Run until the window is closed
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        // Send the uniform
+        glUniform4f(uniform_location, r, 0.0f, 1.0f, 1.0f);
+
+        // Pulse the red channel
+        r += increment;
+        if (r > 1 || r < 0) increment = -increment;
+
+        gl_call(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
 
         glfwSwapBuffers(window);
         glfwPollEvents();
