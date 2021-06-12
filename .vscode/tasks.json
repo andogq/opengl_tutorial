@@ -10,7 +10,10 @@
                 "-g",
                 "${file}",
                 "-o",
-                "${workspaceFolder}/out/${fileBasenameNoExtension}"
+                "${workspaceFolder}/out/${fileBasenameNoExtension}",
+                "-lglfw",
+                "-lGL",
+                "-lGLEW"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
