@@ -17,7 +17,7 @@ struct VertexBufferElement {
             case GL_UNSIGNED_BYTE: return sizeof(GLubyte);
         }
 
-        assert(false);
+        _assert(false);
 
         return 0;
     }
@@ -34,7 +34,7 @@ class VertexBufferLayout {
 
         template<typename T>
         void push(unsigned int count) {
-            assert(false);
+            _assert(false);
         }
 
         inline unsigned int get_stride() const {

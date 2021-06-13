@@ -6,6 +6,7 @@
 #include <iostream>
 #include <unordered_map>
 #include <GL/glew.h>
+#include <glm/glm.hpp>
 
 #include "error.h"
 
@@ -30,6 +31,7 @@ class Shader {
         void set_uniform_1i(const std::string& name, int value);
         void set_uniform_1f(const std::string& name, float value);
         void set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3);
+        void set_uniform_mat4f(const std::string& name, const glm::mat4& matrix);
     
     private:
         ShaderProgramSource parse_shader(const std::string& file_path);
