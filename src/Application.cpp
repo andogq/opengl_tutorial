@@ -51,10 +51,10 @@ int main(void) {
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 
     float positions[] = {
-        100.0f, 100.0f, 0.0f, 0.0f, // 0
-        200.0f, 100.0f, 1.0f, 0.0f, // 1
-        200.0f, 200.0f, 1.0f, 1.0f, // 2
-        100.0f, 200.0f, 0.0f, 1.0f, // 3
+        -50.0f, -50.0f, 0.0f, 0.0f, // 0
+         50.0f, -50.0f, 1.0f, 0.0f, // 1
+         50.0f,  50.0f, 1.0f, 1.0f, // 2
+        -50.0f,  50.0f, 0.0f, 1.0f, // 3
     };
 
     unsigned int indices[] {
@@ -76,7 +76,7 @@ int main(void) {
     IndexBuffer index_buffer(indices, 6);
 
     glm::mat4 projection = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+    glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 0));
 
     Shader shader("res/shaders/basic.glsl");
     shader.bind();
@@ -113,17 +113,20 @@ int main(void) {
         static float f = 0.0f;
         static int counter = 0;
 
-        ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+        ImGui::Begin("Hello, world!");
 
-        ImGui::SliderFloat3("float", &translation.x, 0.0f, 960.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
+        ImGui::SliderFloat3("float", &translation.x, 0.0f, 960.0f);
 
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::End();
 
         shader.bind();
-        shader.set_uniform_mat4f("u_mvp_matrix", mvp);
-
+        shader.set_uniform_mat4f("u_mvp_matrix", glm::translate(mvp, glm::vec3(100, 100, 0)));
         renderer.draw(vertex_array, index_buffer, shader);
+
+        shader.set_uniform_mat4f("u_mvp_matrix", mvp);
+        renderer.draw(vertex_array, index_buffer, shader);
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
