@@ -1,14 +1,4 @@
-#include <iostream>
-
 #include "Renderer.h"
-
-#define assert(x) if (!(x)) raise(SIGTRAP);
-
-#ifdef DEBUG
-#define gl_call(x) gl_clear_errors(); x; assert(gl_check_errors(#x, __FILE__, __LINE__))
-#else
-#define gl_call(x) x
-#endif
 
 void gl_clear_errors() {
     while (glGetError() != GL_NO_ERROR);
@@ -25,4 +15,16 @@ bool gl_check_errors(const char* function, const char* file, int line) {
     }
 
     return ok;
+}
+
+void Renderer::draw(const VertexArray& vertex_array, const IndexBuffer& index_buffer, const Shader& shader) const {
+    shader.bind();
+    vertex_array.bind();
+    index_buffer.bind();
+
+    gl_call(glDrawElements(GL_TRIANGLES, index_buffer.get_count(), GL_UNSIGNED_INT, nullptr));
+}
+
+void Renderer::clear() const {
+    glClear(GL_COLOR_BUFFER_BIT);
 }

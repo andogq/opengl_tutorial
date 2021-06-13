@@ -1,5 +1,6 @@
 #pragma once
 
+#include "error.h"
 #include "VertexBuffer.h"
 #include "VertexBufferLayout.h"
 

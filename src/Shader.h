@@ -5,8 +5,9 @@
 #include <fstream>
 #include <iostream>
 #include <unordered_map>
+#include <GL/glew.h>
 
-#include "Renderer.h"
+#include "error.h"
 
 struct ShaderProgramSource {
     std::string vertex_source;

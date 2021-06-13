@@ -1,16 +1,20 @@
 #pragma once
 
 #include <GL/glew.h>
-#include <signal.h>
+#include <iostream>
 
-#define assert(x) if (!(x)) raise(SIGTRAP);
-
-#ifdef DEBUG
-#define gl_call(x) gl_clear_errors(); x; assert(gl_check_errors(#x, __FILE__, __LINE__))
-#else
-#define gl_call(x) x
-#endif
+#include "error.h"
+#include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
+#include "Shader.h"
 
 void gl_clear_errors();
 
 bool gl_check_errors(const char* function, const char* file, int line);
+
+class Renderer {
+    public:
+        void draw(const VertexArray& vb, const IndexBuffer& ib, const Shader& shader) const;
+        void clear() const;
+};

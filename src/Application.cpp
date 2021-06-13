@@ -3,13 +3,13 @@
 
 #include <iostream>
 
+#define DEBUG
+
 #include "Renderer.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
-
-#define DEBUG
 
 int main(void) {
     GLFWwindow* window;
@@ -57,35 +57,35 @@ int main(void) {
 
     VertexArray vertex_array;
 
-    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+    VertexBuffer vertex_buffer(positions, 4 * 4 * sizeof(float));
     VertexBufferLayout layout;
     layout.push<float>(2);
-    vertex_array.add_buffer(vb, layout);
+    vertex_array.add_buffer(vertex_buffer, layout);
 
-    IndexBuffer ib(indices, 6);
+    IndexBuffer index_buffer(indices, 6);
 
     Shader shader("res/shaders/basic.glsl");
     shader.bind();
+
+    Renderer renderer;
 
     float r = 0.0f;
     float increment = 0.005f;
     
     // Run until the window is closed
     while (!glfwWindowShouldClose(window)) {
-        glClear(GL_COLOR_BUFFER_BIT);
+        renderer.clear();
+        
+        // Pulse the red channel
+        r += increment;
+        if (r > 1 || r < 0) increment = -increment;
 
         // Send the uniform
         shader.bind();
         shader.set_uniform_4f("u_color", r, 0.0f, 1.0f, 1.0f);
 
-        // Pulse the red channel
-        r += increment;
-        if (r > 1 || r < 0) increment = -increment;
-
-        vertex_array.bind();
-        ib.bind();
-
-        gl_call(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+        // Call the draw function
+        renderer.draw(vertex_array, index_buffer, shader);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
