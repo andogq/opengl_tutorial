@@ -8,9 +8,9 @@
                 // "-Wall",
                 // "-Werror",
                 "-g",
-                "${file}",
+                "${workspaceFolder}/src/**.cpp",
                 "-o",
-                "${workspaceFolder}/out/${fileBasenameNoExtension}",
+                "${workspaceFolder}/out/Application",
                 "-lglfw",
                 "-lGL",
                 "-lGLEW"
