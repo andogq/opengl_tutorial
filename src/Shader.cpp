@@ -18,6 +18,18 @@ void Shader::unbind() const {
     gl_call(glUseProgram(0));
 }
 
+void Shader::set_uniform_1i(const std::string& name, int value) {
+    int location = this->get_uniform_location(name);
+
+    gl_call(glUniform1i(location, value));
+}
+
+void Shader::set_uniform_1f(const std::string& name, float value) {
+    int location = this->get_uniform_location(name);
+
+    gl_call(glUniform1f(location, value));
+}
+
 void Shader::set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3) {
     int location = this->get_uniform_location(name);
 

@@ -10,6 +10,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
+#include "Texture.h"
 
 int main(void) {
     GLFWwindow* window;
@@ -44,10 +45,10 @@ int main(void) {
     std::cout << "OpenGL Version: " << glGetString(GL_VERSION) << std::endl;
 
     float positions[] = {
-        -0.5f, -0.5f, // 0
-         0.5f, -0.5f, // 1
-         0.5f,  0.5f, // 2
-        -0.5f,  0.5f, // 3
+        -0.5f, -0.5f, 0.0f, 0.0f, // 0
+         0.5f, -0.5f, 1.0f, 0.0f, // 1
+         0.5f,  0.5f, 1.0f, 1.0f, // 2
+        -0.5f,  0.5f, 0.0f, 1.0f, // 3
     };
 
     unsigned int indices[] {
@@ -55,10 +56,14 @@ int main(void) {
         2, 3, 0
     };
 
+    gl_call(glEnable(GL_BLEND));
+    gl_call(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
     VertexArray vertex_array;
 
     VertexBuffer vertex_buffer(positions, 4 * 4 * sizeof(float));
     VertexBufferLayout layout;
+    layout.push<float>(2);
     layout.push<float>(2);
     vertex_array.add_buffer(vertex_buffer, layout);
 
@@ -67,22 +72,20 @@ int main(void) {
     Shader shader("res/shaders/basic.glsl");
     shader.bind();
 
-    Renderer renderer;
+    Texture texture("res/textures/art.png");
+    texture.bind(0);
+    shader.set_uniform_1i("u_texture", 0);
 
-    float r = 0.0f;
-    float increment = 0.005f;
+    vertex_array.unbind();
+    vertex_buffer.unbind();
+    index_buffer.unbind();
+    shader.unbind();
+
+    Renderer renderer;
     
     // Run until the window is closed
     while (!glfwWindowShouldClose(window)) {
         renderer.clear();
-        
-        // Pulse the red channel
-        r += increment;
-        if (r > 1 || r < 0) increment = -increment;
-
-        // Send the uniform
-        shader.bind();
-        shader.set_uniform_4f("u_color", r, 0.0f, 1.0f, 1.0f);
 
         // Call the draw function
         renderer.draw(vertex_array, index_buffer, shader);
