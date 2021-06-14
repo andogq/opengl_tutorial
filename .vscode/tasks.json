@@ -7,18 +7,25 @@
             "args": [
                 // "-Wall",
                 // "-Werror",
-                "-g",
                 "$(find",
                 "${workspaceFolder}/src",
                 "-type",
                 "f",
                 "-iregex",
                 "'.*\\.cpp')",
+
+                "${workspaceFolder}/src/dependencies/glad/src/gl.c",
+
+                "-g",
+
+                "$(sdl2-config",
+                "--cflags",
+                "--libs)",
+
+                "-I${workspaceFolder}/src/dependencies/glad/include",
+
                 "-o",
-                "${workspaceFolder}/out/Application",
-                "-lglfw",
-                "-lGL",
-                "-lGLEW"
+                "${workspaceFolder}/out/app"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
